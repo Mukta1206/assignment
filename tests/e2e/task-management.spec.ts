@@ -32,6 +32,20 @@ test.describe('Task management', () => {
     await expect(taskManager.taskRow('Fix login bug')).toContainText('Users cannot log in using SSO providers.');
   });
 
+
+  test('does not create a task when the title is empty', async ({ page }) => {
+    const taskManager = new TaskManagerPage(page);
+    await taskManager.goto();
+
+    await taskManager.openNewTaskForm();
+    await taskManager.fillTaskForm({ description: 'Missing a title', status: 'Open' });
+    await taskManager.submitForm();
+
+    await expect(taskManager.titleError()).toHaveText('Title is required');
+    await expect(taskManager.formModal).toBeVisible();
+  });
+
+
   test('deletes a task', async ({ page }) => {
     const taskManager = new TaskManagerPage(page);
     await taskManager.goto();

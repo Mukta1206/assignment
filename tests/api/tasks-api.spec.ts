@@ -14,9 +14,29 @@ test.describe('Tasks API', () => {
     expect(tasks[0]).toHaveProperty('status');
   });
 
-  // TODO (Task C): Add a test here (or in a new file) that creates a task via
-  // POST /tasks and validates:
-  //   - the response status code
-  //   - the shape/structure of the response payload
-  //   - that key attributes (title, description, status) match what was submitted
+test('POST /tasks creates a task and return the submitted fields' , async ({ request }) => {
+  const payload = {
+    title: 'API created task',
+    description: 'Created from the API test',
+    status: 'Open',
+  };
+
+  const response = await request.post(`${API_URL}/tasks`, {
+    headers: { 'Content-Type': 'application/json' },
+    data: payload,
+  });
+  console.log('POST status', response.status());
+  expect(response.status()).toBe(201);  
+
+  const body = await response.json();
+  expect(body).toEqual(
+    expect.objectContaining({
+      title: payload.title,
+      description: payload.description,
+      status: payload.status,
+    })
+  );
+  expect(body).toHaveProperty('id');
 });
+});
+
